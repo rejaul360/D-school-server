@@ -69,7 +69,7 @@ async function run() {
         })
 
         //Users related apis 
-        app.get('/users', verifyJWT, async (req, res) => {
+        app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray()
             res.send(result)
         })
@@ -84,7 +84,7 @@ async function run() {
             const result = await usersCollection.insertOne(users)
             res.send(result)
         })
-        
+
 
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id
@@ -97,17 +97,24 @@ async function run() {
             const result = await usersCollection.updateOne(query, updateDoc);
             res.send(result)
         })
-        //user Admin Email check---------------
-        app.get('/users/admin/:email', verifyJWT, async (req, res) => {
+        // Admin Email check---------------
+        app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
-
-            if (req.decoded.email !== email) {
-                res.send({ admin: false })
-            }
 
             const query = { email: email }
             const user = await usersCollection.findOne(query);
             const result = { admin: user?.role === 'admin' }
+            res.send(result);
+        })
+
+
+        // instractor Email check---------------
+        app.get('/users/instractor/:email',  async (req, res) => {
+            const email = req.params.email;
+
+            const query = { email: email }
+            const user = await usersCollection.findOne(query);
+            const result = { instractor: user?.role === 'instractor' }
             res.send(result);
         })
 
