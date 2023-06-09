@@ -56,6 +56,8 @@ async function run() {
 
 
         // const usersCollection = client.db("summerSC").collection("users");
+
+        //Our collections here
         const classCollection = client.db("summerSC").collection("class");
         const instractorCollection = client.db("summerSC").collection("instractor");
         const usersCollection = client.db("summerSC").collection("users");
@@ -85,7 +87,7 @@ async function run() {
             res.send(result)
         })
 
-
+ // User admin Id
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
