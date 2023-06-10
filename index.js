@@ -3,7 +3,7 @@ const app = express();
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 require('dotenv').config()
-// const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
 const port = process.env.PORT || 5000;
 
 
@@ -157,6 +157,14 @@ async function run() {
         app.get('/myclass/:email', async (req, res) => {
             console.log(req.params.email)
             const result = await addclassCollection.find({ postedBy: req.params.email })
+                // .sort({createdAt: -1})
+                .toArray()
+            res.send(result);
+        })
+
+        app.get('/myselectedclass/:email', async (req, res) => {
+            console.log(req.params.email)
+            const result = await selectedclassCollection.find({ email: req.params.email })
                 // .sort({createdAt: -1})
                 .toArray()
             res.send(result);
