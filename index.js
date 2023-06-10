@@ -58,7 +58,8 @@ async function run() {
         // const usersCollection = client.db("summerSC").collection("users");
 
         //Our collections here
-        const classCollection = client.db("summerSC").collection("class");
+        // const classCollection = client.db("summerSC").collection("class");
+        const addclassCollection = client.db("summerSC").collection("addclass");
         const instractorCollection = client.db("summerSC").collection("instractor");
         const usersCollection = client.db("summerSC").collection("users");
 
@@ -120,7 +121,14 @@ async function run() {
             res.send(result);
         })
 
-
+    //Instractor add Class-------
+    app.post('/addclass', async (req, res) => {
+        const body = req.body;
+        body.createdAt = new Date()
+        const result = await addclassCollection.insertOne(body)
+        res.send(result)
+        console.log(result)
+      })
 
         app.patch('/users/instractor/:id', async (req, res) => {
             const id = req.params.id
@@ -136,7 +144,7 @@ async function run() {
 
         //class related apis 
         app.get('/class', async (req, res) => {
-            const result = await classCollection.find().toArray();
+            const result = await addclassCollection.find().toArray();
             res.send(result);
         })
 
