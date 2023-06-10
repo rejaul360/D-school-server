@@ -63,6 +63,7 @@ async function run() {
         const selectedclassCollection = client.db("summerSC").collection("selectedclass");
         const instractorCollection = client.db("summerSC").collection("instractor");
         const usersCollection = client.db("summerSC").collection("users");
+        const paymentCollection = client.db("summerSC").collection("payments");
 
 
         app.post('/jwt', (req, res) => {
@@ -176,6 +177,34 @@ async function run() {
             const result = await instractorCollection.find().toArray();
             res.send(result);
         })
+        // ********  create payment intent in server site **********
+        app.post('/create-payment-intent', async (req, res) => {
+            const { price } = req.body;
+            const amount = parseInt(price * 100);
+            console.log(price, amount);
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'usd',
+                payment_method_types: ['card']
+            });
+
+            res.send({
+                clientSecret: paymentIntent.client_secret
+            })
+        })
+
+
+        // payment related api
+        app.post('/payments', async (req, res) => {
+            const payment = req.body;
+            const insertResult = await paymentCollection.insertOne(payment);
+
+            const query = { _id: { $in: payment.onlymyClass.map(id => new ObjectId(id)) } }
+            const deleteResult = await selectedclassCollection.deleteMany(query)
+
+            res.send({ insertResult, deleteResult });
+        })
+
 
 
         await client.db("admin").command({ ping: 1 });
