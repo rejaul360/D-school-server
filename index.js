@@ -60,6 +60,7 @@ async function run() {
         //Our collections here
         // const classCollection = client.db("summerSC").collection("class");
         const addclassCollection = client.db("summerSC").collection("addclass");
+        const selectedclassCollection = client.db("summerSC").collection("selectedclass");
         const instractorCollection = client.db("summerSC").collection("instractor");
         const usersCollection = client.db("summerSC").collection("users");
 
@@ -88,7 +89,7 @@ async function run() {
             res.send(result)
         })
 
- // User admin Id
+        // User admin Id
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
@@ -112,7 +113,7 @@ async function run() {
 
 
         // instractor Email check---------------
-        app.get('/users/instractor/:email',  async (req, res) => {
+        app.get('/users/instractor/:email', async (req, res) => {
             const email = req.params.email;
 
             const query = { email: email }
@@ -121,14 +122,20 @@ async function run() {
             res.send(result);
         })
 
-    //Instractor add Class-------
-    app.post('/addclass', async (req, res) => {
-        const body = req.body;
-        body.createdAt = new Date()
-        const result = await addclassCollection.insertOne(body)
-        res.send(result)
-        console.log(result)
-      })
+        //Instractor add Class-------
+        app.post('/addclass', async (req, res) => {
+            const body = req.body;
+            body.createdAt = new Date()
+            const result = await addclassCollection.insertOne(body)
+            res.send(result)
+            console.log(result)
+        })
+
+        app.post('/selectclass', async (req, res) => {
+            const item = req.body
+            const result = await selectedclassCollection.insertOne(item)
+            res.send(result)
+        })
 
         app.patch('/users/instractor/:id', async (req, res) => {
             const id = req.params.id
@@ -147,13 +154,13 @@ async function run() {
             const result = await addclassCollection.find().toArray();
             res.send(result);
         })
-        app.get('/myclass/:email', async(req,res)=>{
+        app.get('/myclass/:email', async (req, res) => {
             console.log(req.params.email)
-            const result = await addclassCollection.find({postedBy:req.params.email})
-            // .sort({createdAt: -1})
-            .toArray()
+            const result = await addclassCollection.find({ postedBy: req.params.email })
+                // .sort({createdAt: -1})
+                .toArray()
             res.send(result);
-          })
+        })
 
 
         //instractor related apis 
@@ -179,4 +186,4 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Summer camp on running this year ${port}`);
-})
+}) 
