@@ -147,6 +147,13 @@ async function run() {
             const result = await addclassCollection.find().toArray();
             res.send(result);
         })
+        app.get('/myclass/:email', async(req,res)=>{
+            console.log(req.params.email)
+            const result = await addclassCollection.find({postedBy:req.params.email})
+            // .sort({createdAt: -1})
+            .toArray()
+            res.send(result);
+          })
 
 
         //instractor related apis 
