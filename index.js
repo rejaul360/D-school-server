@@ -205,6 +205,14 @@ async function run() {
             res.send({ insertResult, deleteResult });
         })
 
+        app.get('/paymenthistory/:email', async (req, res) => {
+            console.log(req.params.email)
+            const result = await paymentCollection.find({ email: req.params.email })
+                // .sort({createdAt: -1})
+                .toArray()
+            res.send(result);
+        })
+
 
 
         await client.db("admin").command({ ping: 1 });
