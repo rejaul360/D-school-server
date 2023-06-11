@@ -61,7 +61,6 @@ async function run() {
         // const classCollection = client.db("summerSC").collection("class");
         const addclassCollection = client.db("summerSC").collection("addclass");
         const selectedclassCollection = client.db("summerSC").collection("selectedclass");
-        // const approvededclassCollection = client.db("summerSC").collection("approvedclass");
         const instractorCollection = client.db("summerSC").collection("instractor");
         const usersCollection = client.db("summerSC").collection("users");
         const paymentCollection = client.db("summerSC").collection("payments");
@@ -73,6 +72,14 @@ async function run() {
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1hr' })
             res.send({ token })
         })
+
+
+        app.delete('/myselectedclass/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await selectedclassCollection.deleteOne(query)
+            res.send(result)
+          })
 
         //Users related apis 
         app.get('/users', async (req, res) => {
@@ -103,7 +110,7 @@ async function run() {
         })
 
 
-        // instractor Email check---------------
+        // **********instractor Email check---------------
         app.get('/users/instractor/:email', async (req, res) => {
             const email = req.params.email;
 
@@ -113,25 +120,27 @@ async function run() {
             res.send(result);
         })
 
-        //Instractor add Class-------
+        //************Instractor add Class AddClassCollections-------
         app.post('/addclass', async (req, res) => {
             const body = req.body;
             body.createdAt = new Date()
             const result = await addclassCollection.insertOne(body)
             res.send(result)
         })
-        app.post('/addclass/:id', async (req, res) => {
-            const id = req.params.id;
-            console.log(id);
+        // app.post('/addclass/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     console.log(id);
 
-        })
+        // })
 
+        //********* Student Selected Classes  ******* */
         app.post('/selectclass', async (req, res) => {
             const item = req.body
             const result = await selectedclassCollection.insertOne(item)
             res.send(result)
         })
 
+         //***** ---Admin approved a Class functionaly implement ***
         app.patch('/class/approved/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
@@ -143,6 +152,8 @@ async function run() {
             const result = await addclassCollection.updateOne(query, updateDoc);
             res.send(result)
         })
+
+        //***** Admin Deny a Class functionaly implement ***
         app.patch('/class/deny/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
@@ -157,7 +168,7 @@ async function run() {
 
 
 
-        // User admin Id
+        //***** User promoted Admin functionaly implement ***
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
@@ -170,6 +181,9 @@ async function run() {
             res.send(result)
         })
 
+
+
+        //***** User promoted Instractor functionaly implement ***
         app.patch('/users/instractor/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
@@ -193,7 +207,6 @@ async function run() {
         app.get('/myclass/:email', async (req, res) => {
             // console.log(req.params.email)
             const result = await addclassCollection.find({ postedBy: req.params.email })
-                // .sort({createdAt: -1})
                 .toArray()
             res.send(result);
         })
@@ -201,7 +214,6 @@ async function run() {
         app.get('/myselectedclass/:email', async (req, res) => {
             // console.log(req.params.email)
             const result = await selectedclassCollection.find({ email: req.params.email })
-                // .sort({createdAt: -1})
                 .toArray()
             res.send(result);
         })
