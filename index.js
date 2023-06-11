@@ -61,6 +61,7 @@ async function run() {
         // const classCollection = client.db("summerSC").collection("class");
         const addclassCollection = client.db("summerSC").collection("addclass");
         const selectedclassCollection = client.db("summerSC").collection("selectedclass");
+        const approvededclassCollection = client.db("summerSC").collection("approvedclass");
         const instractorCollection = client.db("summerSC").collection("instractor");
         const usersCollection = client.db("summerSC").collection("users");
         const paymentCollection = client.db("summerSC").collection("payments");
@@ -137,6 +138,23 @@ async function run() {
             const result = await selectedclassCollection.insertOne(item)
             res.send(result)
         })
+        app.post('/adminaproved', async (req, res) => {
+            const item = req.body
+            const result = await approvededclassCollection.insertOne(item)
+            res.send(result)
+        })
+        //todo
+        app.get('/adminaproved', async (req, res) => {
+            const result = await approvededclassCollection.find().toArray()
+            res.send(result)
+        })
+    //delete operationss-------------------
+    app.delete('/adminreject/:id', async (req, res) => {
+        const id = req.params.id
+        const query = { _id: new ObjectId(id) }
+        const result = await addclassCollection.deleteOne(query)
+        res.send(result)
+      })
 
         app.patch('/users/instractor/:id', async (req, res) => {
             const id = req.params.id
@@ -155,6 +173,9 @@ async function run() {
             const result = await addclassCollection.find().toArray();
             res.send(result);
         })
+
+
+
         app.get('/myclass/:email', async (req, res) => {
             console.log(req.params.email)
             const result = await addclassCollection.find({ postedBy: req.params.email })
@@ -198,6 +219,7 @@ async function run() {
         app.post('/payments', async (req, res) => {
             const payment = req.body;
             const insertResult = await paymentCollection.insertOne(payment);
+
 
             const query = { _id: { $in: payment.onlymyClass.map(id => new ObjectId(id)) } }
             const deleteResult = await selectedclassCollection.deleteMany(query)
