@@ -131,16 +131,6 @@ async function run() {
             const result = await selectedclassCollection.insertOne(item)
             res.send(result)
         })
-        // app.post('/adminaproved', async (req, res) => {
-        //     const item = req.body
-        //     const result = await approvededclassCollection.insertOne(item)
-        //     res.send(result)
-        // })
-        // //todo
-        // app.get('/adminaproved', async (req, res) => {
-        //     const result = await approvededclassCollection.find().toArray()
-        //     res.send(result)
-        // })
 
         app.patch('/class/approved/:id', async (req, res) => {
             const id = req.params.id
