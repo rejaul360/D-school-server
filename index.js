@@ -61,7 +61,7 @@ async function run() {
         // const classCollection = client.db("summerSC").collection("class");
         const addclassCollection = client.db("summerSC").collection("addclass");
         const selectedclassCollection = client.db("summerSC").collection("selectedclass");
-        const approvededclassCollection = client.db("summerSC").collection("approvedclass");
+        // const approvededclassCollection = client.db("summerSC").collection("approvedclass");
         const instractorCollection = client.db("summerSC").collection("instractor");
         const usersCollection = client.db("summerSC").collection("users");
         const paymentCollection = client.db("summerSC").collection("payments");
@@ -69,7 +69,7 @@ async function run() {
 
         app.post('/jwt', (req, res) => {
             const user = req.body;
-            console.log(user);
+            // console.log(user);
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1hr' })
             res.send({ token })
         })
@@ -119,7 +119,11 @@ async function run() {
             body.createdAt = new Date()
             const result = await addclassCollection.insertOne(body)
             res.send(result)
-            console.log(result)
+        })
+        app.post('/addclass/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+
         })
 
         app.post('/selectclass', async (req, res) => {
@@ -127,16 +131,16 @@ async function run() {
             const result = await selectedclassCollection.insertOne(item)
             res.send(result)
         })
-        app.post('/adminaproved', async (req, res) => {
-            const item = req.body
-            const result = await approvededclassCollection.insertOne(item)
-            res.send(result)
-        })
-        //todo
-        app.get('/adminaproved', async (req, res) => {
-            const result = await approvededclassCollection.find().toArray()
-            res.send(result)
-        })
+        // app.post('/adminaproved', async (req, res) => {
+        //     const item = req.body
+        //     const result = await approvededclassCollection.insertOne(item)
+        //     res.send(result)
+        // })
+        // //todo
+        // app.get('/adminaproved', async (req, res) => {
+        //     const result = await approvededclassCollection.find().toArray()
+        //     res.send(result)
+        // })
 
         app.patch('/class/approved/:id', async (req, res) => {
             const id = req.params.id
@@ -197,7 +201,7 @@ async function run() {
 
 
         app.get('/myclass/:email', async (req, res) => {
-            console.log(req.params.email)
+            // console.log(req.params.email)
             const result = await addclassCollection.find({ postedBy: req.params.email })
                 // .sort({createdAt: -1})
                 .toArray()
@@ -205,7 +209,7 @@ async function run() {
         })
 
         app.get('/myselectedclass/:email', async (req, res) => {
-            console.log(req.params.email)
+            // console.log(req.params.email)
             const result = await selectedclassCollection.find({ email: req.params.email })
                 // .sort({createdAt: -1})
                 .toArray()
@@ -222,7 +226,6 @@ async function run() {
         app.post('/create-payment-intent', async (req, res) => {
             const { price } = req.body;
             const amount = parseInt(price * 100);
-            console.log(price, amount);
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
                 currency: 'usd',
