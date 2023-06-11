@@ -91,18 +91,7 @@ async function run() {
             res.send(result)
         })
 
-        // User admin Id
-        app.patch('/users/admin/:id', async (req, res) => {
-            const id = req.params.id
-            const query = { _id: new ObjectId(id) }
-            const updateDoc = {
-                $set: {
-                    role: 'admin'
-                },
-            };
-            const result = await usersCollection.updateOne(query, updateDoc);
-            res.send(result)
-        })
+
         // Admin Email check---------------
         app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
@@ -148,13 +137,44 @@ async function run() {
             const result = await approvededclassCollection.find().toArray()
             res.send(result)
         })
-    //delete operationss-------------------
-    app.delete('/adminreject/:id', async (req, res) => {
-        const id = req.params.id
-        const query = { _id: new ObjectId(id) }
-        const result = await addclassCollection.deleteOne(query)
-        res.send(result)
-      })
+
+        app.patch('/class/approved/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    status: 'approved'
+                },
+            };
+            const result = await addclassCollection.updateOne(query, updateDoc);
+            res.send(result)
+        })
+        app.patch('/class/deny/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    status: 'deny'
+                },
+            };
+            const result = await addclassCollection.updateOne(query, updateDoc);
+            res.send(result)
+        })
+
+
+
+        // User admin Id
+        app.patch('/users/admin/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    role: 'admin'
+                },
+            };
+            const result = await usersCollection.updateOne(query, updateDoc);
+            res.send(result)
+        })
 
         app.patch('/users/instractor/:id', async (req, res) => {
             const id = req.params.id
